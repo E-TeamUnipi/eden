@@ -1,4 +1,4 @@
-from math import pi, sin, cos
+from math import pi, sin, cos, atan2
 from direct.showbase.ShowBase import ShowBase
 from direct.showbase.DirectObject import DirectObject
 from direct.task import Task
@@ -101,8 +101,11 @@ class MyApp(DirectObject):
 
         lookat_pos_x = (cones_side_1[1][0] + cones_side_2[1][0])/2
         lookat_pos_y = (cones_side_1[1][1] + cones_side_2[1][1])/2
+        #self.start_angle = atan2(lookat_pos_y - self.start_pos_y, lookat_pos_x - self.start_pos_x)
+
         camera.setPos(self.start_pos_x, self.start_pos_y, 0.5)
         camera.lookAt(lookat_pos_x, lookat_pos_y, 0.3)
+        self.start_angle = camera.getH()
 
         self.can_task = taskMgr.add(self.handle_can, "handle_can")
 
@@ -111,6 +114,8 @@ class MyApp(DirectObject):
         if msg is not None and msg.arbitration_id == self.simulator_pos_msg.frame_id:
             data = self.simulator_pos_msg.decode(msg.data)
             camera.setPos(self.start_pos_x + data['x'], self.start_pos_y + data['y'], 0.5)
+            angle = (self.start_angle + data['theta'] * 180/pi + 180) % 360
+            camera.setH(angle)
 
         return Task.cont
 

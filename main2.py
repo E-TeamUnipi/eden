@@ -115,7 +115,7 @@ class Joystick:
             elif button_num == SDL_CONTROLLER_BUTTON_B:
                 self._button_states[1] = bool(state)
             elif button_num == SDL_CONTROLLER_BUTTON_X:
-                self._button_states[6] = bool(state)
+                self._button_states[5] = bool(state)
 
             self._button_events = self._button_events[1:]
 
@@ -138,12 +138,12 @@ if __name__ == "__main__":
                 joystick.update()
                 pps = joystick.trigger_left()
                 brake_pressure = joystick.trigger_right() * 400
-                delta_v = joystick.axis_left()[0] * math.pi
+                delta_v = -0.4 * joystick.axis_left()[0] * math.pi
                 sim_input = MSG_FACTORY.generate_simulator_input(pps, brake_pressure, delta_v)
                 canv.send(sim_input)
                 button_msg = joystick.get_button_event()
                 if button_msg is not None:
                     cans.send(button_msg)
 
-                time.sleep(0.1)
+                time.sleep(0.01)
 
